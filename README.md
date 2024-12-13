@@ -35,5 +35,3 @@ Package                      Version
 
 C:\Users\SAIF>java -version
 java version "17.0.11" 2024-04-16 LTS
-Java(TM) SE Runtime Environment (build 17.0.11+7-LTS-207)
-Java HotSpot(TM) 64-Bit Server VM (build 17.0.11+7-LTS-207, mixed mode, sharing)
