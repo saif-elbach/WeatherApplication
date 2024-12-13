@@ -1,6 +1,6 @@
 # WeatherApplication
-weatherAPP (front and back) uses opendata hub open source apis
-versions used : 
+# weatherAPP (front and back) uses opendata hub open source apis
+# versions used : 
 C:\Users\SAIF>node -v
 v16.20.2
 
