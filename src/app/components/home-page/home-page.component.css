@@ -1,0 +1,29 @@
+.custom-navbar {
+    background-color: #007bff; /* Custom blue color */
+  }
+
+  .custom-navbar .navbar-nav .nav-link,
+  .custom-navbar .navbar-brand {
+    color: white !important; /* Ensure text is white */
+  }
+  .btn-link {
+    position: absolute;
+    bottom: 120px; /* Adjust position as needed */
+    left: 87%;
+    transform: translateX(-50%);
+    padding: 5px 24px;
+    font-size: 1.0rem;
+    font-weight: bold;
+    color: white;
+    background-color: orange;
+    border-radius: 5px;
+    text-decoration: none;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease;
+}
+
+.btn-link:hover {
+    background-color: darkorange; /* Darker shade on hover */
+}

@@ -1,0 +1,12 @@
+html, body {
+    height: 100%; /* Ensure body and html span the full height of the viewport */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    background-color: rgba(11,18,30,255); /* Set the background color */
+    font-family: 'Arial', sans-serif;
+    box-sizing: border-box; /* Ensure consistent box-sizing */
+  }
+  
+  body > *:first-child {
+    margin-top: 0 !important; /* Force removal of any top margin */
+  }

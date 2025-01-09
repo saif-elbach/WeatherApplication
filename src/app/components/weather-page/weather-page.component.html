@@ -1,0 +1,428 @@
+
+<html>
+    <header></header>
+
+<body>
+  <app-navbar></app-navbar>
+    <div class="container mt-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 style="font-weight: bold; color: rgb(21, 154, 255); text-shadow: 0px 8px 10px rgba(255, 255, 255, 0.181);"> Weatherly</h1>
+        </div>
+        <div id="home" class="home-section">
+          <div class="map-container">
+            <!-- Embed a map (e.g., Google Maps iframe or any map library you use) -->
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+          <div class="message-container">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.</p>
+          </div>
+        </div>
+        <hr style="color: rgb(199, 199, 199);">
+
+      
+              <!-- Weather Summary Section -->
+              <div class="row" id="weather">
+                <div class="col-md-4">
+                  <div class="card p-3 text-center">
+                    <h3>BIKES PER STATION</h3>
+                
+                    <!-- Dropdown for selecting a station -->
+                    <select class="form-select text-primary mb-3" style="background-color: rgba(11,18,30,255); color: white; border-color: rgba(11,18,30,255);" (change)="onStationSelect($event)">
+                      <option>Select a station</option>
+                      <option *ngFor="let trend of trends" [value]="trend.stationName">
+                        {{ trend.stationName }}
+                      </option>
+                    </select>
+                
+                    <!-- Display selected station data in a styled box -->
+                    <div class="station-details-container">
+                      <div *ngIf="selectedStation" class="station-details card p-3 mb-3" style="background-color: rgba(11,18,30,255);">
+                        <div class="row">
+                          <div class="col-6 text-end">
+                            <p><strong>Station:</strong></p>
+                            <p><strong>Available Bikes:</strong></p>
+                            <p><strong>Timestamp:</strong></p>
+                            <p><strong>Latitude:</strong></p>
+                            <p><strong>Longitude:</strong></p>
+                          </div>
+                          <div class="col-6 text-start">
+                            <p class="text-primary">{{ selectedStation?.stationName }}</p>
+                            <p class="text-primary">{{ selectedStation?.availableBikes }}</p>
+                            <p class="text-primary">{{ selectedStation?.timestamp | date:'yyyy-MM-dd HH:mm' }}</p>
+                            <p class="text-primary">{{ selectedStation?.latitude }}</p>
+                            <p class="text-primary">{{ selectedStation?.longitude }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Image displayed only when no station is selected -->
+                    <img *ngIf="!selectedStation" src="assets/bici.png" alt="Bike Station GIF" class="station-gif bici mb-3" />
+                    
+                  </div>
+                </div>
+                
+                
+                
+                                 
+                              
+                <div class="col-md-8">
+                  <div class="card p-3 card-top-right">
+                    <div class="d-flex justify-content-around info-group" *ngIf="selectedRegion">
+                      <p>
+                        Today's weather in 
+                        <span style="color: rgb(131, 170, 228);">{{ selectedRegion?.DistrictName }}</span> is 
+                        <span style="color: rgb(131, 170, 228);">{{ selectedRegion?.BezirksForecast[0]?.WeatherDesc }}</span>. 
+                        The maximum temperature will be 
+                        <span style="color: rgb(131, 170, 228);">{{ selectedRegion?.BezirksForecast[0]?.MaxTemp }}°C</span>, 
+                        and the minimum will be 
+                        <span style="color: rgb(131, 170, 228);">{{ selectedRegion?.BezirksForecast[0]?.MinTemp }}°C</span>.
+                      </p>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+
+
+      <br>
+        <div style="  margin-left: 400px; position: relative; left: 100px; margin-top: -503px;">
+          <div class="d-flex align-items-center justify-content-between">
+            <h3 style="font-size: 1.5rem; color: rgb(24, 108, 234);">
+              THE WEATHER IN {{weatherArrayLength}} REGIONS
+            </h3>
+            <div>
+              <button class="btn btn-primary small-btn" (click)="previousPage()" [disabled]="currentPage === 0">Previous</button>
+              <button class="btn btn-primary small-btn" (click)="nextPage()" [disabled]="currentPage >= maxPages">Next</button>
+            </div> 
+          </div>
+          <div>
+            <!-- Outer loop for districts -->
+            <div *ngFor="let wd of paginatedWeatherData; let j = index">
+              <h4 style="font-size: 1rem; color: white; cursor: pointer;" (click)="selectRegion(wd)">{{ wd.DistrictName }}</h4>
+              
+              <!-- Inner loop for BezirksForecast -->
+              <div 
+                style="display: grid; grid-template-columns: repeat(6, 1fr); justify-items: center;">
+                
+                <div *ngFor="let forecast of wd.BezirksForecast; let i = index" class="cards card " 
+                     style="width: 9rem; padding: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); height: 120px;">
+                  
+                  <!-- Label for each box -->
+                  <div style="position: absolute; top: 5px; left: 5px; font-size: 0.7rem; font-weight: bold; background-color: rgba(11,18,30,255); padding: 2px 5px; border-radius: 8px;">
+                    {{ getForecastLabel(i) }}
+                  </div>
+                  <br>
+                  
+                  <!-- Image and description -->
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <img [src]="getWeatherIcon(forecast.WeatherDesc)" alt="Weather icon" 
+                         style="height: 40px; width: 40px; object-fit: contain;">
+                    <p style="font-size: 0.75rem; font-weight: bold; margin: 0;">{{ forecast.WeatherDesc }}</p>
+                  </div>
+                  
+                  <!-- MaxTemp and MinTemp side by side -->
+                  <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
+                    <p class="card-text" style="margin: 0;">Max: {{ forecast.MaxTemp }}°C</p>
+                    <p class="card-text" style="margin: 0;">Min: {{ forecast.MinTemp }}°C</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+
+          <!--
+          <div >
+            <div>
+              <h2>5-Day Forecast</h2>
+              <div *ngFor="let day of weatherData">
+                <p>{{ day.WeatherDesc }}</p>
+                <p>Max: {{ day.MaxTemp }}°C</p>
+                <p>Min: {{ day.MinTemp }}°C</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div *ngFor="let station of bikes">
+              <h2>{{ station.pcoordinate }}</h2>
+              <p>Available Bikes: {{ station.AvailableBikes }}</p>
+              <p>Timestamp: {{ station.Timestamp }}</p>
+              <p>Latitude: {{ station.Latitude }}</p>
+              <p>Longitude: {{ station.Longitude }}</p>
+            </div>
+          </div>
+        -->
+    <hr style="color: rgb(199, 199, 199);">
+    <br><br><br>
+
+    
+
+    <div class="col-md-8 fixed-section" id="hangout">
+      <div class="card p-3 card-top-right" style="height: 592px; background-color: rgba(32,43,60,255); position: relative;">
+        <div class="info-group">
+          <div class="row" style="margin-bottom: 150px;">
+            <form (ngSubmit)="onSubmit()">
+              <!-- Weather preference dropdown -->
+              <div class="col-7">
+                <br>
+                <h3 style="font-weight:bold; font-size: 37px; width: 400px;">RECOMMENDATIONS</h3>
+              <p style="color: rgb(206, 206, 206); width: 350px;">In this section, you can select your destination based on your preferred weather. All you need to do is complete the form and click the button.</p>
+              <br><br>
+                <p><strong class="text-primary">Preferred Weather:</strong></p>
+                <select [(ngModel)]="weather" name="weather" class="form-select mb-3" required
+                  style="width: 350px !important; border-radius: 12px; background-color: rgba(11,18,30,255); color: rgba(255, 255, 255, 0.8); border-color: rgba(11,18,30,255);">
+                  <option value="cloudy">Cloudy</option>
+                  <option value="sunny">Sunny</option>
+                  <option value="partly cloudy">Partly Cloudy</option>
+                  <option value="very cloudy">Very Cloudy</option>
+                </select>
+              </div>
+            
+              <!-- Min temperature input -->
+              <div class="col-7">
+                <p><strong class="text-primary">Min Temperature:</strong></p>
+                <input type="number" [(ngModel)]="minTemp" name="minTemp" placeholder="example: -5" class="form-control mb-3" required
+                  style="border-radius: 12px; width: 350px !important; background-color: rgba(11,18,30,255); border-color: rgba(11,18,30,255); color: rgba(255, 255, 255, 0.8);">
+              </div>
+            
+              <!-- Max temperature input -->
+              <div class="col-7">
+                <p><strong class="text-primary">Max Temperature:</strong></p>
+                <input type="number" [(ngModel)]="maxTemp" name="maxTemp" placeholder="example: 15" class="form-control mb-3" required
+                  style="border-radius: 12px; width: 350px !important; background-color: rgba(11,18,30,255); border-color: rgba(11,18,30,255); color: rgba(255, 255, 255, 0.8);">
+              </div>
+            
+              <div class="col-7">
+                <button type="submit" class="btn btn-primary" style="border-radius: 10px; width: 120px; background-color: #3080e8; border-color: #3080e8;">
+                  Explore
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          
+          <div class="row d-flex justify-content-end" style="position: absolute; right: 29px; width: 1300px; z-index: 0; pointer-events: none;">
+            <div class="col-md-4">
+              <div class="card p-3 text-center" style="background-color: rgba(11,18,30,255); height: 535px; margin-top: -38px;">
+                <div style="margin-top: 120px;">
+                  <p style="color: rgb(20, 124, 242); font-weight: bold;">We help you to travel better !</p>
+                  <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                  <lord-icon
+                    src="https://cdn.lordicon.com/fttvwdlw.json"
+                    trigger="loop"
+                    stroke="light"
+                    state="hover-roll"
+                    colors="primary:#3080e8,secondary:#b4b4b4"
+                    style="width:250px;height:250px">
+                  </lord-icon>
+                  <!--<img src="assets/load.gif" alt="">--> 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+<!-- Error Alert -->
+
+
+<!-- Error Alert -->
+
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
+  <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;" class="recom">
+    <div *ngIf="isError" class="alert alert-warning" role="alert" style="width: 340px; text-align: center;">
+      Oups! Fill in the Form correctly please
+    </div>
+    <div *ngFor="let trend of filteredTrends" class="recom-small">
+      <!-- Dynamic image based on the weather description -->
+      <img [src]="getWeatherIcon(trend.WeatherDesc)" alt="Weather Icon" class="card-image">
+      
+      <!-- Description inside card -->
+      <div class="card-content">
+        <p style="font-size: 0.8rem; font-weight: bold; color: rgba(255, 255, 255, 0.8); margin-bottom: 2px;">
+          {{ trend.DistrictName }}
+        </p>
+        <p style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 2px;">
+          <strong style="color: #4d9aff;">Weather:</strong> {{ trend.WeatherDesc }}
+        </p>
+        <p style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.8);">
+          <strong style="color: #4d9aff;">Temperature Range:</strong> {{ trend.TemperatureRange }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr style="color: rgb(199, 199, 199);">
+<br>
+
+
+
+
+<div class="col-md-8 fixed-section" id="stations"> 
+  <div class="card p-3 card-top-right" style="height: 200px; background-color: rgba(32,43,60,255); position: relative;width: 155%;">
+    <div class="info-group">
+      <div class="row" style="margin-bottom: 150px;">
+        <form (ngSubmit)="onSubmit()">
+          <!-- Location preference dropdown -->
+          <div class="col-7">
+            <h3 style="font-weight:bold; font-size: 37px; width: 500px;">WALK SMART NOT HARD ;)</h3>
+            <p style="color: rgb(206, 206, 206); width: 750px;">Choose a location that feels convenient for you and explore the available bikes there.</p>
+            <br>
+            <p><strong class="text-primary">Select Location</strong></p>
+            <select [(ngModel)]="selectedLocation" (ngModelChange)="weatherToBikeDistances(selectedLocation)" name="location" class="form-select mb-3" required
+              style="width: 350px !important; border-radius: 12px; background-color: rgba(11,18,30,255); color: rgba(255, 255, 255, 0.8); border-color: rgba(11,18,30,255);">
+              <option value="Bolzano, Überetsch and Unterland">Bolzano, Überetsch and Unterland</option>
+              <option value="Burggrafenamt - Meran and surroundings">Burggrafenamt - Meran and surroundings</option>
+              <option value="Vinschgau">Vinschgau</option>
+              <option value="Eisacktal and Sarntal">Eisacktal and Sarntal</option>
+              <option value="Wipptal - Sterzing and surroundings">Wipptal - Sterzing and surroundings</option>
+              <option value="Pustertal">Pustertal</option>
+              <option value="Ladinia - Dolomites">Ladinia - Dolomites</option>
+            </select>          
+          </div>
+        </form>
+      </div>
+      
+      <div class="row d-flex justify-content-end" style="position: absolute; right: 29px; width: 1300px; z-index: 0; pointer-events: none;">
+        <div class="col-md-4">
+          <div class="card p-3 text-center" style="background-color: rgba(11,18,30,255); height: 150px; margin-top: -153px;">
+            <div style="margin-top: 120px;">
+              <script src="https://cdn.lordicon.com/lordicon.js"></script>
+              <img style="width: 150px; height: 150px; margin-top: -150px;" src="assets/locat.gif" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Display weather data in smaller boxes with pagination -->
+<div class="weather-cards-container" style="margin-top: 20px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 20px;">
+  <div *ngFor="let weather of currentPageData" class="weather-card card" style="background-color: rgba(32, 43, 60, 255); padding: 12px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); max-width: 260px; height: auto; overflow: hidden;">
+    
+    <!-- Card Body (Details) -->
+    <div class="weather-card-body" style="font-size: 0.9rem; color: #fff; margin-top: 10px; text-align: left;">
+      
+      <!-- Bike Station -->
+      <div style="margin-bottom: 8px;">
+        <strong style="color: #2389e3;">Bike Station: </strong> <span>{{ weather.bikeStationName }}</span>
+      </div>
+      
+      <!-- Distance -->
+      <div style="margin-bottom: 8px;">
+        <strong style="color: #2389e3;">Distance: </strong> <span>{{ weather.distance }} km</span>
+      </div>
+      
+      <!-- Available Bikes -->
+      <div>
+        <strong style="color: #2389e3;">Available Bikes: </strong> <span>{{ weather.availableBikes }}</span>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- Pagination Controls -->
+<div *ngIf="hasData" class="pagination-controls" style="text-align: center; margin-top: 20px;">
+  <button (click)="previousPageTwo()" [disabled]="currentPageTwo === 0" class="btn btn-primary" style="border-radius: 10px; margin-right: 10px;">Previous</button>
+  <button (click)="nextPageTwo()" [disabled]="(currentPageTwo + 1) * itemsPerPageTwo >= weatherToBikesDistance.length" class="btn btn-primary" style="border-radius: 10px;">Next</button>
+</div>
+
+
+
+
+
+
+
+<hr style="color: rgb(199, 199, 199);">
+<!-- Display "OR" text in center with large font size -->
+<div style="text-align: center; font-size: 4rem; font-weight: bold; color: #ffffff; margin-top: 20px;">
+  OR
+</div>
+<hr style="color: rgb(199, 199, 199);">
+<br>     
+
+
+
+<div class="col-md-8 fixed-section"> 
+  <div class="card p-3 card-top-right" style="height: 200px; background-color: rgba(32,43,60,255); position: relative;width: 155%;">
+    <div class="info-group">
+      <div class="row" style="margin-bottom: 150px;">
+        <form (ngSubmit)="onSubmit()">
+          <!-- Location preference dropdown -->
+          <div class="col-7">
+            <h3 style="font-weight:bold; font-size: 37px; width: 500px;">WALK SMART NOT HARD ;)</h3>
+            <p style="color: rgb(206, 206, 206); width: 750px;">Choose a station that feels convenient for you by simply selecting the bike type.</p>
+            <br>
+            <p><strong class="text-primary">Select Bike Type</strong></p>
+            <select [(ngModel)]="selectedLocation" (ngModelChange)="getStationsByBikeType($event)" name="location" class="form-select mb-3" required
+              style="width: 350px !important; border-radius: 12px; background-color: rgba(11,18,30,255); color: rgba(255, 255, 255, 0.8); border-color: rgba(11,18,30,255);">
+              <option value="mountain-bike-adult">mountain-bike-adult</option>
+              <option value="mountain-bike-child">mountain-bike-child</option>
+              <option value="city-bike-adult-with-gears">city-bike-adult-with-gears</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      
+      
+      <div class="row d-flex justify-content-end" style="position: absolute; right: 29px; width: 1300px; z-index: 0; pointer-events: none;">
+        <div class="col-md-4">
+          <div class="card p-3 text-center" style="background-color: rgba(11,18,30,255); height: 150px; margin-top: -153px;">
+            <div style="margin-top: 120px;">
+              <script src="https://cdn.lordicon.com/lordicon.js"></script>
+              <img style="width: 150px; height: 150px; margin-top: -150px;" src="assets/world.gif" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Display weather data in smaller boxes with pagination -->
+<div class="weather-cards-container" style="margin-top: 20px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 20px;">
+  <div *ngFor="let weather of currentPageDataTwo" class="weather-card card" style="background-color: rgba(32, 43, 60, 255); padding: 12px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); max-width: 260px; height: auto; overflow: hidden;">
+    
+    <!-- Card Body (Details) -->
+    <div class="weather-card-body" style="font-size: 0.9rem; color: #fff; margin-top: 10px; text-align: left;">
+      
+      <!-- Bike Station -->
+      <div style="margin-bottom: 8px;">
+        <strong style="color: #2389e3;">Bike Station: </strong> <span>{{ weather.bikeStationName }}</span>
+      </div>
+      
+      <!-- Distance -->
+      <div style="margin-bottom: 8px;">
+        <strong style="color: #2389e3;">Distance: </strong> <span>{{ weather.distance }}</span>
+      </div>
+      
+      <!-- Available Bikes -->
+      <div>
+        <strong style="color: #2389e3;">Available Bikes: </strong> <span>{{ weather.availableBikes }}</span>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<hr style="color: rgb(199, 199, 199);">
+
+
+
+
+
+
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+  <nav class="navbar bg-body-tertiary">
+    <div class="nav-logo">
+      <a href="#"><img src="assets\weather (2).png" class="img-fluid" style="width: 40px; height: 40px;"></a>
+    </div>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link active" [routerLink]="['/app-weather-page']" fragment="home">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/app-weather-page']" fragment="weather">
+          <i class="fas fa-cloud-sun"></i> Weather
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/app-weather-page']" fragment="hangout">
+          <i class="fas fa-users"></i> Hangout
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/app-weather-page']" fragment="stations">
+          <i class="fa-solid fa-location-dot"></i> Stations
+        </a>
+      </li>
+    </ul>
+    
+  </nav>
+  
+</body>
